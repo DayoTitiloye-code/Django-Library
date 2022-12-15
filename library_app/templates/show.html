@@ -4,5 +4,15 @@
 
     <h1>{{book.name}}</h1>
     <em>Wrote the book: {{book.title}}</em>
+    {% if book.borrower %}
+        <p>Book has been borrowed by {{book.borrower}}</p>
+    {% else %}
+        <p>Would you like to borrow this book?</p>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Borrow Book">
+        </form>
+    {% endif %}
 
 {% endblock content %}

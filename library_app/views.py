@@ -1,10 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Book 
-# books = [
-#     {'id': 1, 'title': 'Life, the Universe and Everything', 'author': 'Douglas Adams'},
-#     {'id': 2, 'title': 'The Meaning of Liff', 'author': 'Douglas Adams'},
-#     {'id': 3, 'title': 'The No. 1 Ladies\' Detective Agency', 'author': 'Alexander McCall Smith'}
-# ]
+from django.contrib.auth.decorators import login_required
+from .forms import BorrowBook
+
 
 def home(request):
     data = {"books": Book.objects.all}
@@ -14,12 +12,22 @@ def home(request):
 def books_collection(request):
     return render(request, 'books.html')
 
+
+@login_required
 def show(request, id):
     book = get_object_or_404(Book, pk=id)
     # book = list(filter(lambda book:book['id'] == id, books))
-    data = {'book': book}
-    print(book)
-    print(data)
+    if request.method == 'POST':
+        form = BorrowBook(request.POST)
+        if form.is_valid():
+            book.borrower = request.user
+            book.save()
+            return redirect('library-show', id=id)
+    else:
+        form = BorrowBook(initial={'borrower': request.user})
+    data = {'book': book, 'form': form}
+    # print(book)
+    # print(data)
     return render(request, 'show.html', data)
 
 

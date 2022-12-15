@@ -27,6 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+LOGIN_REDIRECT_URL = 'library-home'
+
+LOGIN_URL = 'login'
+
 
 # Application definition
 
